@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru-US">
+  <head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="guess number beer andrew garifov">
+    <meta name="description" content="Игра угадайка">
+
+    <title>Угадай кол-во кружек пива</title>
+
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+
+
+      html {
+        font-family: 'Roboto', sans-serif;
+      }
+
+      .avatar {
+        width: 200px;
+        border-radius: 27px;
+        box-shadow: 4px 4px 14px rgba(0, 0, 0, .25);
+      }
+
+      .card {
+        border-radius: 20px;
+        padding: 15px 20px;
+        margin-bottom: 20px;
+      }
+
+      .bg-blue{
+        background: blueviolet;
+      }
+
+      body {
+        background: lavender;
+        width: 50%;
+        max-width: 800px;
+        min-width: 480px;
+        margin: 0 auto;
+      }
+      
+      .form input[type="number"] {
+        width: 200px;
+      }
+
+      .lastResult {
+        color: white;
+        padding: 3px;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <img src="game.jpg" alt="Это я" class="avatar">
+
+    <h1><em>Игра "Угадай сколько кружек пива мы выпьем, когда встретимся!" </em></h1>
+
+    <h4>Автор: Andrew Garifov</h4>
+
+    <div class="card bg-blue">
+
+    <p><em><strong>Представьте, что вы встретились со мной(Андреем Гарифовым) в уютном баре. Я заказал нам [от 1 до 100]  кружек пива. Попробуйте угадать сколько конкретно кружек пива я заказал нам. Вам дается 10 попыток. После каждого вашего ответа я буду сообщать, был ли ваш ответ больше правильного ответа или меньше. Удачи!!!</strong></em></p>
+
+    </div>
+
+    <div class="form">
+      <label for="guessField">Введите число:</label>
+      <input type="number" min="1" max="100" required id="guessField" class="guessField">
+      <input type="submit" value="Отправить" class="guessSubmit">
+    </div>
+
+    <div class="resultParas">
+      <p class="guesses"></p>
+      <p class="lastResult"></p>
+      <p class="lowOrHi"></p>
+    </div>
+
+    <script>
+      let randomNumber = Math.floor(Math.random() * 100) + 1;
+      const guesses = document.querySelector('.guesses');
+      const lastResult = document.querySelector('.lastResult');
+      const lowOrHi = document.querySelector('.lowOrHi');
+      const guessSubmit = document.querySelector('.guessSubmit');
+      const guessField = document.querySelector('.guessField');
+      let guessCount = 1;
+      let resetButton;
+
+      function checkGuess() {
+        const userGuess = Number(guessField.value);
+        if (guessCount === 1) {
+          guesses.textContent = 'Предыдущие ваши предположения: ';
+        }
+
+        guesses.textContent += userGuess + ' ';
+
+        if (userGuess === randomNumber) {
+          lastResult.textContent = 'Поздравляю! Вы угадали! Погнали скорее опустошать кружки! ';
+          lastResult.style.backgroundColor = 'green';
+          lowOrHi.textContent = '';
+          setGameOver();
+        } else if (guessCount === 10) {
+          lastResult.textContent = 'Конец игры!Ну раз вы не угадали, то все кружки достаются мне! АХАХАХАХАХА ';
+          lowOrHi.textContent = '';
+          setGameOver();
+        } else {
+          lastResult.textContent = 'Неправильно!';
+          lastResult.style.backgroundColor = 'red';
+          if(userGuess < randomNumber) {
+            lowOrHi.textContent = 'Последнее ваше предположение было меньше правильного ответа!' ;
+          } else if(userGuess > randomNumber) {
+            lowOrHi.textContent = 'Последнее ваше предположение было больше правильного ответа!';
+          }
+        }
+
+        guessCount++;
+        guessField.value = '';
+        guessField.focus();
+      }
+
+      guessSubmit.addEventListener('click', checkGuess);
+
+      function setGameOver() {
+        guessField.disabled = true;
+        guessSubmit.disabled = true;
+        resetButton = document.createElement('button');
+        resetButton.textContent = 'Старт новой игры';
+        document.body.appendChild(resetButton);
+        resetButton.addEventListener('click', resetGame);
+      }
+
+      function resetGame() {
+        guessCount = 1;
+        const resetParas = document.querySelectorAll('.resultParas p');
+        for (const resetPara of resetParas) {
+          resetPara.textContent = '';
+        }
+
+        resetButton.parentNode.removeChild(resetButton);
+        guessField.disabled = false;
+        guessSubmit.disabled = false;
+        guessField.value = '';
+        guessField.focus();
+        lastResult.style.backgroundColor = 'white';
+        randomNumber = Math.floor(Math.random() * 100) + 1;
+      }
+    </script>
+  </body>
+</html>
